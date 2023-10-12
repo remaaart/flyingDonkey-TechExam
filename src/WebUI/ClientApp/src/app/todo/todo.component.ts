@@ -32,7 +32,8 @@ export class TodoComponent implements OnInit {
     id: [null],
     listId: [null],
     priority: [''],
-    note: ['']
+    note: [''],
+    backgroundColor: [''],
   });
 
 
@@ -55,6 +56,11 @@ export class TodoComponent implements OnInit {
       error => console.error(error)
     );
   }
+
+    onColorChange(event: any) {
+        const newColor = event.target.value;
+        this.itemDetailsFormGroup.get('backgroundColor').setValue(newColor);
+    }
 
   // Lists
   remainingItems(list: TodoListDto): number {
@@ -163,6 +169,7 @@ export class TodoComponent implements OnInit {
 
         this.selectedItem.priority = item.priority;
         this.selectedItem.note = item.note;
+        this.selectedItem.backgroundColor = item.backgroundColor;
         this.itemDetailsModalRef.hide();
         this.itemDetailsFormGroup.reset();
       },
