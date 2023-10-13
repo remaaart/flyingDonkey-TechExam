@@ -17,8 +17,7 @@ public record UpdateTodoItemDetailCommand : IRequest
     public string? Note { get; init; }
 
     //public string Tags { get; init; }
-    //public List<Tag> Tags { get; init; }
-    public List<string> Tags { get; init; }
+    public List<Tag> Tags { get; init; }
 }
 
 public class UpdateTodoItemDetailCommandHandler : IRequestHandler<UpdateTodoItemDetailCommand>
