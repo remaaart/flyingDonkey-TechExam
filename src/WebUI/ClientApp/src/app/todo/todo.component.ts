@@ -1,11 +1,11 @@
 import { Component, TemplateRef, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, FormArray, FormControl } from '@angular/forms';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import {
   TodoListsClient, TodoItemsClient,
   TodoListDto, TodoItemDto, PriorityLevelDto,
   CreateTodoListCommand, UpdateTodoListCommand,
-  CreateTodoItemCommand, UpdateTodoItemDetailCommand
+  CreateTodoItemCommand, UpdateTodoItemDetailCommand,
 } from '../web-api-client';
 
 @Component({
@@ -32,7 +32,10 @@ export class TodoComponent implements OnInit {
     id: [null],
     listId: [null],
     priority: [''],
-    note: ['']
+    note: [''],
+      //tags: [''],
+    tags: this.fb.array([]),
+    nTag: ['']
   });
 
 
@@ -40,7 +43,7 @@ export class TodoComponent implements OnInit {
     private listsClient: TodoListsClient,
     private itemsClient: TodoItemsClient,
     private modalService: BsModalService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
   ) { }
 
   ngOnInit(): void {
@@ -55,6 +58,40 @@ export class TodoComponent implements OnInit {
       error => console.error(error)
     );
   }
+
+    addTag() {
+        const tagControl = this.itemDetailsFormGroup.get('nTag');
+        const tagsArray = this.itemDetailsFormGroup.get('tags') as FormArray;
+
+        if (tagControl.value.trim() !== '') {
+            tagsArray.push(this.fb.control(tagControl.value));
+            tagControl.setValue('');
+        }
+    }
+
+    removeTag(index: number) {
+        const tagsArray = this.itemDetailsFormGroup.get('tags') as FormArray;
+        tagsArray.removeAt(index);
+    }
+
+    /*addTags(newTag: string): void {
+        const tagsControl = this.itemDetailsFormGroup.get('tags');
+
+        if (newTag.trim() !== '') {
+            const currentTags = tagsControl.value.split(',');
+            currentTags.push(newTag);
+            tagsControl.setValue(currentTags.join(','));
+            this.itemDetailsFormGroup.get('nTag').setValue(''); 
+        }
+    }
+
+    removeTag(index: number): void {
+        const tagsControl = this.itemDetailsFormGroup.get('tags');
+        const currentTags = tagsControl.value.split(',');
+        currentTags.splice(index, 1);
+        tagsControl.setValue(currentTags.join(','));
+    }*/
+
 
   // Lists
   remainingItems(list: TodoListDto): number {
@@ -163,6 +200,7 @@ export class TodoComponent implements OnInit {
 
         this.selectedItem.priority = item.priority;
         this.selectedItem.note = item.note;
+        this.selectedItem.tags = item.tags;
         this.itemDetailsModalRef.hide();
         this.itemDetailsFormGroup.reset();
       },
