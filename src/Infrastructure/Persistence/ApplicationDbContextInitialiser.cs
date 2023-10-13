@@ -78,11 +78,12 @@ public class ApplicationDbContextInitialiser
                 Title = "Todo List",
                 Items =
                 {
-                    new TodoItem { Title = "Make a todo list 📃" },
-                    new TodoItem { Title = "Check off the first item ✅" },
-                    new TodoItem { Title = "Realise you've already done two things on the list! 🤯"},
-                    new TodoItem { Title = "Reward yourself with a nice, long nap 🏆" },
-                }
+                    new TodoItem { Title = "Make a todo list 📃" , IsActive = true},
+                    new TodoItem { Title = "Check off the first item ✅" , IsActive = true},
+                    new TodoItem { Title = "Realise you've already done two things on the list! 🤯" , IsActive = true},
+                    new TodoItem { Title = "Reward yourself with a nice, long nap 🏆", IsActive = true },
+                },
+                IsActive = true
             });
 
             await _context.SaveChangesAsync();

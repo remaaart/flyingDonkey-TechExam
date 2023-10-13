@@ -490,6 +490,9 @@
           "note": {
             "type": "string",
             "nullable": true
+          },
+          "isActive": {
+            "type": "boolean"
           }
         }
       },
@@ -562,6 +565,9 @@
             "items": {
               "$ref": "#/components/schemas/TodoItemDto"
             }
+          },
+          "isActive": {
+            "type": "boolean"
           }
         }
       },
@@ -591,6 +597,9 @@
           "note": {
             "type": "string",
             "nullable": true
+          },
+          "isActive": {
+            "type": "boolean"
           }
         }
       },
@@ -615,6 +624,9 @@
           "title": {
             "type": "string",
             "nullable": true
+          },
+          "isActive": {
+            "type": "boolean"
           }
         }
       },
