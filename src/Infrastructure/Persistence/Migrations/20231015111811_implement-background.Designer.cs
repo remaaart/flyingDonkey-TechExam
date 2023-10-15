@@ -12,8 +12,8 @@ using Todo_App.Infrastructure.Persistence;
 namespace Todo_App.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231012062545_sample2")]
-    partial class sample2
+    [Migration("20231015111811_implement-background")]
+    partial class implementbackground
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -311,8 +311,7 @@ namespace Todo_App.Infrastructure.Persistence.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("BackgroundColor")
-                        .HasMaxLength(15)
-                        .HasColumnType("nvarchar(15)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");

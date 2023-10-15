@@ -78,10 +78,10 @@ public class ApplicationDbContextInitialiser
                 Title = "Todo List",
                 Items =
                 {
-                    new TodoItem { Title = "Make a todo list 📃" },
-                    new TodoItem { Title = "Check off the first item ✅" },
-                    new TodoItem { Title = "Realise you've already done two things on the list! 🤯"},
-                    new TodoItem { Title = "Reward yourself with a nice, long nap 🏆" },
+                    new TodoItem { Title = "Make a todo list 📃", BackgroundColor = "#000000"},
+                    new TodoItem { Title = "Check off the first item ✅" , BackgroundColor = "#000000"},
+                    new TodoItem { Title = "Realise you've already done two things on the list! 🤯", BackgroundColor = "#000000"},
+                    new TodoItem { Title = "Reward yourself with a nice, long nap 🏆", BackgroundColor = "#000000" },
                 }
             });
 

@@ -237,7 +237,6 @@ namespace Todo_App.Infrastructure.Persistence.Migrations
                     ListId = table.Column<int>(type: "int", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     Note = table.Column<string>(type: "nvarchar(2)", maxLength: 2, nullable: true),
-                    BackgroundColor = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: true),
                     Priority = table.Column<int>(type: "int", nullable: false),
                     Reminder = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Done = table.Column<bool>(type: "bit", nullable: false),
