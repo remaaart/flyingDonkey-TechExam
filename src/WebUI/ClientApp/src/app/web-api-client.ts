@@ -854,6 +854,7 @@ export class UpdateTodoItemDetailCommand implements IUpdateTodoItemDetailCommand
     listId?: number;
     priority?: PriorityLevel;
     note?: string | undefined;
+    isActive?: boolean;
 
     constructor(data?: IUpdateTodoItemDetailCommand) {
         if (data) {
@@ -870,6 +871,7 @@ export class UpdateTodoItemDetailCommand implements IUpdateTodoItemDetailCommand
             this.listId = _data["listId"];
             this.priority = _data["priority"];
             this.note = _data["note"];
+            this.isActive = _data["isActive"];
         }
     }
 
@@ -886,6 +888,7 @@ export class UpdateTodoItemDetailCommand implements IUpdateTodoItemDetailCommand
         data["listId"] = this.listId;
         data["priority"] = this.priority;
         data["note"] = this.note;
+        data["isActive"] = this.isActive;
         return data;
     }
 }
@@ -895,6 +898,7 @@ export interface IUpdateTodoItemDetailCommand {
     listId?: number;
     priority?: PriorityLevel;
     note?: string | undefined;
+    isActive?: boolean;
 }
 
 export enum PriorityLevel {
@@ -1005,6 +1009,7 @@ export class TodoListDto implements ITodoListDto {
     title?: string | undefined;
     colour?: string | undefined;
     items?: TodoItemDto[];
+    isActive?: boolean;
 
     constructor(data?: ITodoListDto) {
         if (data) {
@@ -1025,6 +1030,7 @@ export class TodoListDto implements ITodoListDto {
                 for (let item of _data["items"])
                     this.items!.push(TodoItemDto.fromJS(item));
             }
+            this.isActive = _data["isActive"];
         }
     }
 
@@ -1045,6 +1051,7 @@ export class TodoListDto implements ITodoListDto {
             for (let item of this.items)
                 data["items"].push(item.toJSON());
         }
+        data["isActive"] = this.isActive;
         return data;
     }
 }
@@ -1054,6 +1061,7 @@ export interface ITodoListDto {
     title?: string | undefined;
     colour?: string | undefined;
     items?: TodoItemDto[];
+    isActive?: boolean;
 }
 
 export class TodoItemDto implements ITodoItemDto {
@@ -1063,6 +1071,7 @@ export class TodoItemDto implements ITodoItemDto {
     done?: boolean;
     priority?: number;
     note?: string | undefined;
+    isActive?: boolean;
 
     constructor(data?: ITodoItemDto) {
         if (data) {
@@ -1081,6 +1090,7 @@ export class TodoItemDto implements ITodoItemDto {
             this.done = _data["done"];
             this.priority = _data["priority"];
             this.note = _data["note"];
+            this.isActive = _data["isActive"];
         }
     }
 
@@ -1099,6 +1109,7 @@ export class TodoItemDto implements ITodoItemDto {
         data["done"] = this.done;
         data["priority"] = this.priority;
         data["note"] = this.note;
+        data["isActive"] = this.isActive;
         return data;
     }
 }
@@ -1110,6 +1121,7 @@ export interface ITodoItemDto {
     done?: boolean;
     priority?: number;
     note?: string | undefined;
+    isActive?: boolean;
 }
 
 export class CreateTodoListCommand implements ICreateTodoListCommand {
@@ -1151,6 +1163,7 @@ export interface ICreateTodoListCommand {
 export class UpdateTodoListCommand implements IUpdateTodoListCommand {
     id?: number;
     title?: string | undefined;
+    isActive?: boolean;
 
     constructor(data?: IUpdateTodoListCommand) {
         if (data) {
@@ -1165,6 +1178,7 @@ export class UpdateTodoListCommand implements IUpdateTodoListCommand {
         if (_data) {
             this.id = _data["id"];
             this.title = _data["title"];
+            this.isActive = _data["isActive"];
         }
     }
 
@@ -1179,6 +1193,7 @@ export class UpdateTodoListCommand implements IUpdateTodoListCommand {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["title"] = this.title;
+        data["isActive"] = this.isActive;
         return data;
     }
 }
@@ -1186,6 +1201,7 @@ export class UpdateTodoListCommand implements IUpdateTodoListCommand {
 export interface IUpdateTodoListCommand {
     id?: number;
     title?: string | undefined;
+    isActive?: boolean;
 }
 
 export class WeatherForecast implements IWeatherForecast {

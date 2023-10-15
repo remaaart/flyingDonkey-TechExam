@@ -17,4 +17,6 @@ public class TodoListDto : IMapFrom<TodoList>
     public string? Colour { get; set; }
 
     public IList<TodoItemDto> Items { get; set; }
+
+    public bool IsActive { get; set; }
 }

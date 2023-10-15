@@ -23,6 +23,7 @@ public class CreateTodoListCommandHandler : IRequestHandler<CreateTodoListComman
         var entity = new TodoList();
 
         entity.Title = request.Title;
+        entity.IsActive = true;
 
         _context.TodoLists.Add(entity);
 

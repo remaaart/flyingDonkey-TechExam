@@ -10,6 +10,8 @@ public record UpdateTodoListCommand : IRequest
     public int Id { get; init; }
 
     public string? Title { get; init; }
+
+    public bool IsActive { get; init; }
 }
 
 public class UpdateTodoListCommandHandler : IRequestHandler<UpdateTodoListCommand>
@@ -32,6 +34,7 @@ public class UpdateTodoListCommandHandler : IRequestHandler<UpdateTodoListComman
         }
 
         entity.Title = request.Title;
+        entity.IsActive = request.IsActive;
 
         await _context.SaveChangesAsync(cancellationToken);
 
