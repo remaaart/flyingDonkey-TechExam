@@ -452,10 +452,6 @@
           "title": {
             "type": "string",
             "nullable": true
-          },
-          "backgroundColor": {
-            "type": "string",
-            "nullable": true
           }
         }
       },
