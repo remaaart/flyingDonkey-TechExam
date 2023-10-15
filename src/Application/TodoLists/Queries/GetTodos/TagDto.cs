@@ -8,7 +8,7 @@ using Todo_App.Domain.Entities;
 
 namespace Todo_App.Application.TodoLists.Queries.GetTodos;
 
-public class TagDto : IMapFrom<TagDto>
+public class TagDto : IMapFrom<Tag>
 {
     public int Id { get; set; }
 

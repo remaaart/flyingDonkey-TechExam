@@ -17,7 +17,7 @@ public record UpdateTodoItemDetailCommand : IRequest
     public string? Note { get; init; }
 
     //public string Tags { get; init; }
-    public List<Tag> Tags { get; init; }
+    //public List<Tag> Tags { get; init; }
 }
 
 public class UpdateTodoItemDetailCommandHandler : IRequestHandler<UpdateTodoItemDetailCommand>
@@ -42,7 +42,7 @@ public class UpdateTodoItemDetailCommandHandler : IRequestHandler<UpdateTodoItem
         entity.ListId = request.ListId;
         entity.Priority = request.Priority;
         entity.Note = request.Note;
-        entity.Tags = request.Tags;
+        //entity.Tags = request.Tags;
 
         await _context.SaveChangesAsync(cancellationToken);
 

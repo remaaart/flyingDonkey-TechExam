@@ -29,9 +29,6 @@
             </ul>
         </div>
         <div class="col-sm-8" *ngIf="selectedList">
-            <div class="col-sm-4">
-                <input class="form-control" type="text" placeholder="Enter a tag to filter" />
-            </div>
             <div class="clearfix">
                 <h2 class="float-start">{{ selectedList.title }}</h2>
                 <button id="listOptions" class="btn btn-default float-end" title="List Options..."
@@ -39,8 +36,32 @@
                     <i class="bi bi-three-dots-vertical"></i>
                 </button>
             </div>
+            <div class="col-sm-12" style="display: flex;">
+                <div class="col-sm-8">
+                    <label>Filter:</label>
+                    <div style="display: flex; flex-wrap: wrap;">
+                        <button class="btn" [class.selected-button]="selectedTags.includes(tag)" [class.unselected-button]="!selectedTags.includes(tag)" *ngFor="let tag of distinctTags" (click)="toggleTag(tag)">
+                            {{ tag }}
+                        </button>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <input class="form-control" type="text" placeholder="Search item" [(ngModel)]="searchText" (input)="filterItemsBySearch()" />
+                </div>
+            </div>
+            <div class="selected-tag">
+                <span *ngIf="selectedTags.length > 0">Selected Tags: {{ selectedTags.join(', ') }}</span>
+            </div>
+            <div class="col-sm-12">
+                <label>Most used tags:</label>
+                <div>
+                    <button class="btn btn-primary m-1 custom-button" *ngFor="let tag of mostUsedTags" (click)="toggleTag(tag)">
+                        {{ tag }}
+                    </button>
+                </div>
+            </div>
             <ul id="todo-items" class="list-group mb-2">
-                <li class="list-group-item" *ngFor="let item of selectedList.items; index as i">
+                <li class="list-group-item" *ngFor="let item of filteredTodoItems; index as i">
                     <div class="d-flex">
                         <div class="todo-item-checkbox">
                             <input type="checkbox" [(ngModel)]="item.done" (change)="updateItem(item)" />
@@ -71,155 +92,145 @@
 </div>
 
 <div *ngIf="debug">
-  <pre>{{ lists | json }}</pre>
+    <pre>{{ lists | json }}</pre>
 </div>
 
 <ng-template #listOptionsModalTemplate>
-  <div class="modal-header">
-    <h4 class="modal-title pull-left">List Options</h4>
-    <button type="button" class="close btn-close pull-right" aria-label="Close" (click)="listOptionsModalRef.hide()">
-      <span aria-hidden="true" class="visually-hidden">&times;</span>
-    </button>
-  </div>
-  <div class="modal-body">
-    <div class="form-group">
-      <label for="inputListTitle">Title</label>
-      <input type="text" class="form-control" id="inputListTitle" placeholder="List name..."
-        [(ngModel)]="listOptionsEditor.title" (keyup.enter)="updateListOptions()" />
+    <div class="modal-header">
+        <h4 class="modal-title pull-left">List Options</h4>
+        <button type="button" class="close btn-close pull-right" aria-label="Close" (click)="listOptionsModalRef.hide()">
+            <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
     </div>
-    <div *ngIf="debug">
-      <pre>{{ listOptionsEditor | json }}</pre>
+    <div class="modal-body">
+        <div class="form-group">
+            <label for="inputListTitle">Title</label>
+            <input type="text" class="form-control" id="inputListTitle" placeholder="List name..."
+                   [(ngModel)]="listOptionsEditor.title" (keyup.enter)="updateListOptions()" />
+        </div>
+        <div *ngIf="debug">
+            <pre>{{ listOptionsEditor | json }}</pre>
+        </div>
     </div>
-  </div>
-  <div class="modal-footer">
-    <div class="clearfix">
-      <div class="float-start">
-        <button class="btn btn-default text-danger" (click)="confirmDeleteList(deleteListModalTemplate)">Delete</button>
-      </div>
-      <div class="float-end">
-        <button class="btn btn-default" (click)="listOptionsModalRef.hide()">Cancel</button>
-        <button class="btn btn-primary" (click)="updateListOptions()">Update</button>
-      </div>
+    <div class="modal-footer">
+        <div class="clearfix">
+            <div class="float-start">
+                <button class="btn btn-default text-danger" (click)="confirmDeleteList(deleteListModalTemplate)">Delete</button>
+            </div>
+            <div class="float-end">
+                <button class="btn btn-default" (click)="listOptionsModalRef.hide()">Cancel</button>
+                <button class="btn btn-primary" (click)="updateListOptions()">Update</button>
+            </div>
+        </div>
     </div>
-  </div>
 </ng-template>
 
 <ng-template #itemDetailsModalTemplate>
-  <div class="modal-header">
-    <h4 class="modal-title pull-left">Item Details</h4>
-    <button type="button" class="close btn-close pull-right" aria-label="Close" (click)="itemDetailsModalRef.hide()">
-      <span aria-hidden="true" class="visually-hidden">&times;</span>
-    </button>
-  </div>
-  <div class="modal-body">
-      <form [formGroup]="itemDetailsFormGroup" class="form">
-          <div class="form-group">
-              <label for="list">List</label>
-              <select class="form-control" formControlName="listId">
-                  <option [ngValue]="list.id" *ngFor="let list of lists">{{ list.title }}</option>
-              </select>
-          </div>
-          <div class="form-group">
-              <label for="priority">Priority</label>
-              <select class="form-control" formControlName="priority">
-                  <option [ngValue]="level.value" *ngFor="let level of priorityLevels">{{ level.name }}</option>
-              </select>
-          </div>
-          <div class="form-group">
-              <label for="note">Note</label>
-              <textarea id="note" class="form-control" rows="3" formControlName="note"></textarea>
-          </div>
-          <div class="form-group">
+    <div class="modal-header">
+        <h4 class="modal-title pull-left">Item Details</h4>
+        <button type="button" class="close btn-close pull-right" aria-label="Close" (click)="itemDetailsModalRef.hide()">
+            <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form [formGroup]="itemDetailsFormGroup" class="form">
+            <div class="form-group">
+                <label for="list">List</label>
+                <select class="form-control" formControlName="listId">
+                    <option [ngValue]="list.id" *ngFor="let list of lists">{{ list.title }}</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="priority">Priority</label>
+                <select class="form-control" formControlName="priority">
+                    <option [ngValue]="level.value" *ngFor="let level of priorityLevels">{{ level.name }}</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="note">Note</label>
+                <textarea id="note" class="form-control" rows="3" formControlName="note"></textarea>
+            </div>
+            <div class="form-group">
                 <label for="tag">Tag</label>
                 <input class="form-control" type="text" formControlName="nTag" placeholder="Add a tag" (keyup.enter)="addTag()" />
             </div>
             <div class="form-group">
-                <ul class="tag-list" >
-                    <li class="tag" *ngFor="let tag of itemDetailsFormGroup.get('tags')['controls']; let i = index">
-                    {{ tag.value }}
-                        <button type="button" class="btn btn-link" (click)="removeTag(i)">
-                          <i class="bi bi-x"></i>
-                      </button>
+                <ul style="list-style-type: none;margin: 0px;padding: 0px;">
+                    <li> 
+                        <ul  class="tag-list">
+                            <li class="tag" *ngFor="let tag of selectedItem.tags; let i = index">
+                                {{ tag.title }}
+                                <button type="button" class="btn btn-link" (click)="removeTag(i)">
+                                    <i class="bi bi-x"></i>
+                                </button>
+                            </li>
+                        </ul>
                     </li>
                 </ul>
             </div>
-          <!--<div class="form-group">
-              <label for="tag">Tag</label>
-              <input class="form-control" type="text" formControlName="nTag" placeholder="Add a tag" (keyup.enter)="addTags(itemDetailsFormGroup.get('nTag').value)" />
-          </div>
-          <div class="form-group">
-              <ul class="tag-list">
-                  <li class="tag" *ngFor="let tag of itemDetailsFormGroup.get('tags').value.split(','); let i = index">
-                      {{ tag.trim() }}
-                      <button type="button" class="btn btn-link" (click)="removeTag(i)">
-                          <i class="bi bi-x"></i>
-                      </button>
-                  </li>
-              </ul>
-          </div>-->
-      </form>
-      <div *ngIf="debug">
-          <pre>{{ itemDetailsFormGroup.value | json }}</pre>
-      </div>
-  </div>
-  <div class="modal-footer">
-    <div class="clearfix">
-      <div class="float-start">
-        <button class="btn btn-default text-danger" (click)="deleteItem(selectedItem, true)">{{deleting ? 'Deleting ' + deleteCountDown + ' ...' : 'Delete'}}</button>
-      </div>
-      <div class="float-end">
-        <button class="btn btn-default" (click)="itemDetailsModalRef.hide()">Cancel</button>
-        <button class="btn btn-primary" (click)="updateItemDetails()">Update</button>
-      </div>
+        </form>
+        <div *ngIf="debug">
+            <pre>{{ itemDetailsFormGroup.value | json }}</pre>
+        </div>
     </div>
-  </div>
+    <div class="modal-footer">
+        <div class="clearfix">
+            <div class="float-start">
+                <button class="btn btn-default text-danger" (click)="deleteItem(selectedItem, true)">{{deleting ? 'Deleting ' + deleteCountDown + ' ...' : 'Delete'}}</button>
+            </div>
+            <div class="float-end">
+                <button class="btn btn-default" (click)="itemDetailsModalRef.hide()">Cancel</button>
+                <button class="btn btn-primary" (click)="updateItemDetails()">Update</button>
+            </div>
+        </div>
+    </div>
 </ng-template>
 
 <ng-template #deleteListModalTemplate>
-  <div class="modal-header">
-    <h4 class="modal-title pull-left">Delete "{{ selectedList?.title }}"?</h4>
-    <button type="button" class="close btn-close pull-right" aria-label="Close" (click)="deleteListModalRef.hide()">
-      <span aria-hidden="true" class="visually-hidden">&times;</span>
-    </button>
-  </div>
-  <div class="modal-body">
-    <p>All items will be permanently deleted. </p>
-    <div *ngIf="debug">
-      <pre>{{ selectedList | json }}</pre>
+    <div class="modal-header">
+        <h4 class="modal-title pull-left">Delete "{{ selectedList?.title }}"?</h4>
+        <button type="button" class="close btn-close pull-right" aria-label="Close" (click)="deleteListModalRef.hide()">
+            <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
     </div>
-  </div>
-  <div class="modal-footer clearfix">
-    <div class="float-end">
-      <button type="button" class="btn btn-default" (click)="deleteListModalRef.hide()">Cancel</button>
-      <button type="button" class="btn btn-danger" (click)="deleteListConfirmed()">Delete</button>
+    <div class="modal-body">
+        <p>All items will be permanently deleted. </p>
+        <div *ngIf="debug">
+            <pre>{{ selectedList | json }}</pre>
+        </div>
     </div>
-  </div>
+    <div class="modal-footer clearfix">
+        <div class="float-end">
+            <button type="button" class="btn btn-default" (click)="deleteListModalRef.hide()">Cancel</button>
+            <button type="button" class="btn btn-danger" (click)="deleteListConfirmed()">Delete</button>
+        </div>
+    </div>
 </ng-template>
 
 <ng-template #newListModalTemplate>
-  <div class="modal-header">
-    <h4 class="modal-title pull-left">New List</h4>
-    <button type="button" class="close btn-close pull-right" aria-label="Close" (click)="newListCancelled()">
-      <span aria-hidden="true" class="visually-hidden">&times;</span>
-    </button>
-  </div>
-  <div class="modal-body">
-    <div class="form-group">
-      <label for="title">Title</label>
-      <input type="text" class="form-control" id="title" placeholder="List title..." [(ngModel)]="newListEditor.title"
-        [ngClass]="{ 'is-invalid': newListEditor.error }" (keyup.enter)="addList()" />
-      <div *ngIf="newListEditor.error" class="invalid-feedback">
-        {{ newListEditor.error }}
-      </div>
+    <div class="modal-header">
+        <h4 class="modal-title pull-left">New List</h4>
+        <button type="button" class="close btn-close pull-right" aria-label="Close" (click)="newListCancelled()">
+            <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
     </div>
-    <div *ngIf="debug">
-      <pre>{{ newListEditor | json }}</pre>
+    <div class="modal-body">
+        <div class="form-group">
+            <label for="title">Title</label>
+            <input type="text" class="form-control" id="title" placeholder="List title..." [(ngModel)]="newListEditor.title"
+                   [ngClass]="{ 'is-invalid': newListEditor.error }" (keyup.enter)="addList()" />
+            <div *ngIf="newListEditor.error" class="invalid-feedback">
+                {{ newListEditor.error }}
+            </div>
+        </div>
+        <div *ngIf="debug">
+            <pre>{{ newListEditor | json }}</pre>
+        </div>
     </div>
-  </div>
-  <div class="modal-footer clearfix">
-    <div class="float-end">
-      <button class="btn btn-default" (click)="newListCancelled()">Cancel</button>
-      <button class="btn btn-primary" (click)="addList()">Create</button>
+    <div class="modal-footer clearfix">
+        <div class="float-end">
+            <button class="btn btn-default" (click)="newListCancelled()">Cancel</button>
+            <button class="btn btn-primary" (click)="addList()">Create</button>
+        </div>
     </div>
-  </div>
 </ng-template>

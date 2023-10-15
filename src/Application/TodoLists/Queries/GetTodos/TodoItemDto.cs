@@ -20,7 +20,9 @@ public class TodoItemDto : IMapFrom<TodoItem>
 
     //public string Tags { get; set; }
 
-    public List<Tag> Tags { get; set; }
+    //public List<TagDto> Tags { get; set; }
+
+    public IList<TagDto> Tags { get; set; }
 
     public void Mapping(Profile profile)
     {

@@ -8,9 +8,9 @@ namespace Todo_App.Domain.Entities;
 
 public class Tag : BaseAuditableEntity
 {
-    public int Id { get; set; }
-
     public int ItemId { get; set; }
 
     public string? Title { get; set; }
+
+    public TodoItem Item { get; set; } = null!;
 }
