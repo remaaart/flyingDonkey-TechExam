@@ -80,7 +80,9 @@ export class TodoComponent implements OnInit {
                 allTags.push(...tagTitles);
             });
         });
-        return Array.from(new Set(allTags));
+
+        const distinctSortedTags = Array.from(new Set(allTags)).sort((a, b) => a.localeCompare(b));
+        return distinctSortedTags;
     }
 
     filterTodoItems(): void {
@@ -293,6 +295,7 @@ export class TodoComponent implements OnInit {
                 this.selectedItem.priority = item.priority;
                 this.selectedItem.note = item.note;
                 this.calculateMostUsedTags();
+                this.distinctTags = this.extractDistinctTags();
                 this.itemDetailsModalRef.hide();
                 this.itemDetailsFormGroup.reset();
             },

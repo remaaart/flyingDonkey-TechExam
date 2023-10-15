@@ -12,8 +12,8 @@ using Todo_App.Infrastructure.Persistence;
 namespace Todo_App.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231013063216_feature2")]
-    partial class feature2
+    [Migration("20231015145503_implementTags")]
+    partial class implementTags
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -328,12 +328,9 @@ namespace Todo_App.Infrastructure.Persistence.Migrations
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("TodoItemId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("TodoItemId");
+                    b.HasIndex("ItemId");
 
                     b.ToTable("Tags");
                 });
@@ -534,9 +531,13 @@ namespace Todo_App.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("Todo_App.Domain.Entities.Tag", b =>
                 {
-                    b.HasOne("Todo_App.Domain.Entities.TodoItem", null)
+                    b.HasOne("Todo_App.Domain.Entities.TodoItem", "Item")
                         .WithMany("Tags")
-                        .HasForeignKey("TodoItemId");
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Item");
                 });
 
             modelBuilder.Entity("Todo_App.Domain.Entities.TodoItem", b =>
